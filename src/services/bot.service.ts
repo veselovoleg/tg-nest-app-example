@@ -1,22 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Command } from 'src/commands/command.class';
 import { StartCommand } from 'src/commands/start.command';
-import { Context, Telegraf } from 'telegraf';
+import { IBotContext, IBotService } from 'src/misc/interfaces';
+import { Telegraf } from 'telegraf';
 import LocalSession = require('telegraf-session-local');
 import { ConfigService } from './config.service';
 
-export interface SessionData {
-  reaction: string;
-}
-
-export interface IBotContext extends Context {
-  session: SessionData;
-}
-
 @Injectable()
-export class BotService {
-  bot: Telegraf<IBotContext>;
-  commands: Command[] = [];
+export class BotService implements IBotService {
+  public bot: Telegraf<IBotContext>;
+  private commands: Command[] = [];
 
   constructor(private readonly configService: ConfigService) {
     this.bot = new Telegraf<IBotContext>(this.configService.get('TOKEN'));
@@ -25,7 +18,7 @@ export class BotService {
     );
   }
 
-  public init() {
+  public init(): void {
     this.commands = [new StartCommand(this.bot)];
 
     for (const command of this.commands) {
@@ -35,3 +28,5 @@ export class BotService {
     this.bot.launch();
   }
 }
+export { IBotContext };
+
