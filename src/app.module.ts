@@ -14,10 +14,13 @@ import { ForeCastService } from './services/forecast.service';
     ConfigService,
     {
       provide: BotService,
-      useFactory: (configService: ConfigService) => {
-        return new BotService(configService);
+      useFactory: (
+        configService: ConfigService,
+        forecastService: ForeCastService,
+      ) => {
+        return new BotService(configService, forecastService);
       },
-      inject: [ConfigService],
+      inject: [ConfigService, ForeCastService],
     },
   ],
 })

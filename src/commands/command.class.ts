@@ -1,11 +1,13 @@
 import * as fs from 'fs';
 import { IBotContext } from 'src/services/bot.service';
+import { ForeCastService } from 'src/services/forecast.service';
 import { Telegraf, Context } from 'telegraf';
 
 export abstract class Command {
   constructor(
     protected bot: Telegraf<IBotContext>,
     protected allowedUsersIds: string[],
+    protected forecastService: ForeCastService,
   ) {}
 
   abstract handle(): void;
