@@ -9,9 +9,13 @@ import { ConfigService } from './config.service';
 @Injectable()
 export class BotService implements IBotService {
   public bot: Telegraf<IBotContext>;
+  private allowedUsersIds: string[];
   private commands: Command[] = [];
 
   constructor(private readonly configService: ConfigService) {
+    this.allowedUsersIds =
+      this.configService.get('ALLOWED_USERS')?.split(',') || [];
+    console.log({ allowedUserIds: this.allowedUsersIds });
     this.bot = new Telegraf<IBotContext>(this.configService.get('TOKEN'));
     this.bot.use(
       new LocalSession({ database: 'telegram_sessions_db.json' }).middleware(),
@@ -19,7 +23,7 @@ export class BotService implements IBotService {
   }
 
   public init(): void {
-    this.commands = [new StartCommand(this.bot)];
+    this.commands = [new StartCommand(this.bot, this.allowedUsersIds)];
 
     for (const command of this.commands) {
       command.handle();
@@ -29,4 +33,3 @@ export class BotService implements IBotService {
   }
 }
 export { IBotContext };
-

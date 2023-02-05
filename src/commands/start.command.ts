@@ -1,17 +1,25 @@
+import * as fs from 'fs';
 import { IBotContext } from 'src/services/bot.service';
 import { HOROSKOP_SIGNS_NAMES as signs } from '../misc/constants';
 import { Markup, Telegraf } from 'telegraf';
 import { Command } from './command.class';
 
 export class StartCommand extends Command {
-  constructor(public bot: Telegraf<IBotContext>) {
-    super(bot);
+  constructor(
+    public bot: Telegraf<IBotContext>,
+    protected allowedUsersIds: string[],
+  ) {
+    super(bot, allowedUsersIds);
   }
 
   public handle(): void {
     const signsList = Object.values(signs);
     this.bot.start((ctx) => {
-      console.log(ctx.session);
+      if (!this.checkIfUserIdAllowed(ctx.from.id)) {
+        this.replyToUnknownUser(ctx);
+        return;
+      }
+
       ctx.reply(
         `${ctx.from.first_name}, выберите свой знак зодиака, чтобы получить предсказание 🔮`,
         Markup.inlineKeyboard(
@@ -23,6 +31,8 @@ export class StartCommand extends Command {
           ]),
         ),
       );
+
+      console.log(ctx.from.id);
     });
 
     signsList.forEach((item) =>
