@@ -36,6 +36,11 @@ export class StartCommand extends Command {
 
     signsList.forEach((item) =>
       this.bot.action(item.id, (ctx) => {
+        if (!this.checkIfUserIdAllowed(ctx.from.id)) {
+          this.replyToUnknownUser(ctx);
+          return;
+        }
+
         ctx.session.reaction = item.id;
         ctx.editMessageText(
           `${ctx.from.first_name}, ваш знак зодиака: ${
