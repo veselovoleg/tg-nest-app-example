@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import { IBotContext } from 'src/services/bot.service';
 import { HOROSKOP_SIGNS_NAMES as signs } from '../misc/constants';
 import { Markup, Telegraf } from 'telegraf';
